@@ -8,7 +8,7 @@ minute=$(date +%M)
 HOME_COW="/opt/homebrew/bin"
 HOME_RUBY="/opt/homebrew/opt/ruby/bin"
 
-for cow in $("$HOME_COW/cowsay" -l); do
+for cow in $(cowsay -l); do
   if [ $num = $actor ]; then
     vaca="$cow"
   fi
@@ -28,13 +28,26 @@ quote() {
   print -P "%F{3}${author}%f: “%F{5}${quote}%f”"
 }
 
+# Get fonts, remove duplicates - convert to array
+fontlistfinal=(${(f)"$(find /var/lib/gems/3.2.0/gems/artii-2.1.2/lib/figlet/fonts -type f -name "*.flf" 2>/dev/null | \
+    awk -F'/' '{print $NF}' | \
+    cut -d'.' -f1 | \
+    sort -u)"})
+
+# Pick a random font
+randomfont=${fontlistfinal[$RANDOM % ${#fontlistfinal[@]} + 1]}
+
+# Print with the random font
+artii "C L O U D E R A" -f "$randomfont" | lolcat
+
 if [ $(expr $minute % 2) -eq "0" ]; then
-  artii -f small "C L O U D E R A" | lolcat
   quote | cowsay -f $vaca | lolcat
 else
-  artii -f ogre "C L O U D E R A" | lolcat
   fortune | cowsay -f $vaca | lolcat
 fi
 
 
 echo $vaca | lolcat
+echo "\n"
+#neofetch
+fastfetch
